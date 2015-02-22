@@ -1,0 +1,86 @@
+---
+title: "Practical Machine Learning Prediction"
+author: "Marius"
+date: "Saturday, February 21, 2015"
+output: html_document
+---
+
+## Data Processing
+
+```{r echo=FALSE, results='hide', warning=FALSE}
+library(Hmisc)
+library(caret)
+library(randomForest)
+library(foreach)
+library(doParallel)
+set.seed(1)
+```
+
+We load the required data making sure we mark NA values as such.
+
+```{r results='hide'}
+# the location of the data
+train_file_name <- "pml-training.csv"
+train_data <- read.csv(train_file_name, na.strings=c("NA", "#DIV/0!") )
+
+# the location of the data
+test_file_name <- "pml-testing.csv"
+test_data <- read.csv(test_file_name, na.strings=c("NA", "#DIV/0!") )
+```
+
+We also ignore columns that are all NAs in the training set as they won't predict anything. The first columns contain usernames and time stamps which are also unlikley to be predictive. We also display the remaining columns.
+```{r}
+features <- colnames(train_data[colSums(is.na(train_data)) == 0])[-(1:7)]
+train_data <- train_data[features]
+print(features)
+```
+
+## Modeling
+
+We now have the model data built from our feature set.
+
+```{r}
+testIndex <- createDataPartition(y=train_data$classe, p=0.70, list=FALSE )
+train_subset <- train_data[testIndex,]
+test_subset <- train_data[-testIndex,]
+```
+
+We build a data set to hold the feature we want to train on, and a list to hold the required predictions.
+
+```{r}
+
+rf_model <- train(classe~., data=train_subset, method = "rf", tuneLength = 1, ntree = 50)
+print(rf_model)
+
+```
+
+## Tests
+
+Do a confusion matrix test to see if the model is good enough.
+
+```{r}
+pred_test_subset <- predict(rf_model, test_subset)
+confusionMatrix(pred_test_subset, test_subset$classe)
+
+```
+
+The model is quite accurate with over 99% accuray, sensitivy and specificity.
+
+## Data submission
+
+Hereunder the code to create the files for the submission.
+
+```{r}
+pml_write_files = function(x){
+  n = length(x)
+  for(i in 1:n){
+    filename = paste0("problem_id_",i,".txt")
+    write.table(x[i],file=filename,quote=FALSE,row.names=FALSE,col.names=FALSE)
+  }
+}
+
+final_test_date = test_data[features[features!='classe']]
+submission_preds = predict(rf_model, final_test_date)
+pml_write_files(submission_preds)
+```
+
