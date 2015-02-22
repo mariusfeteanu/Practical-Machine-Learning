@@ -78,19 +78,7 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 ## 
 ## The following object is masked from 'package:survival':
 ## 
-##     cluster
-## 
-## randomForest 4.6-10
-## Type rfNews() to see new features/changes/bug fixes.
-## 
-## Attaching package: 'randomForest'
-## 
-## The following object is masked from 'package:Hmisc':
-## 
-##     combine
-## 
-## Loading required package: iterators
-## Loading required package: parallel</code></pre>
+##     cluster</code></pre>
 <p>We load the required data making sure we mark NA values as such.</p>
 <pre class="r"><code># the location of the data
 train_file_name &lt;- &quot;pml-training.csv&quot;
@@ -129,8 +117,18 @@ print(features)</code></pre>
 train_subset &lt;- train_data[testIndex,]
 test_subset &lt;- train_data[-testIndex,]</code></pre>
 <p>We build a data set to hold the feature we want to train on, and a list to hold the required predictions.</p>
-<pre class="r"><code>rf_model &lt;- train(classe~., data=train_subset, method = &quot;rf&quot;, tuneLength = 1, ntree = 50)
-print(rf_model)</code></pre>
+<pre class="r"><code>rf_model &lt;- train(classe~., data=train_subset, method = &quot;rf&quot;, tuneLength = 1, ntree = 50)</code></pre>
+<pre><code>## Loading required package: randomForest</code></pre>
+<pre><code>## Warning: package 'randomForest' was built under R version 3.1.2</code></pre>
+<pre><code>## randomForest 4.6-10
+## Type rfNews() to see new features/changes/bug fixes.
+## 
+## Attaching package: 'randomForest'
+## 
+## The following object is masked from 'package:Hmisc':
+## 
+##     combine</code></pre>
+<pre class="r"><code>print(rf_model)</code></pre>
 <pre><code>## Random Forest 
 ## 
 ## 13737 samples

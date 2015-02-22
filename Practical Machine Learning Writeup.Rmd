@@ -10,9 +10,6 @@ output: html_document
 ```{r echo=FALSE, results='hide', warning=FALSE}
 library(Hmisc)
 library(caret)
-library(randomForest)
-library(foreach)
-library(doParallel)
 set.seed(1)
 ```
 
